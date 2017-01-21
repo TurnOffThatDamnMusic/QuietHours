@@ -93,13 +93,20 @@ public class MainLoop : MonoBehaviour {
         }
 
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+    // Update is called once per frame
+    // Spawn enemies
+    int maxEnemies = 15;
+    int currentEnemies = 1;
+    void Update () {
+		if(currentEnemies < maxEnemies)
+        {
+            currentEnemies++;
+            instantiateEnemy();
+        }
 	}
 
-    public void intantiateTower(Object someObject)
+    public void instantiateTower(Object someObject)
     {
         
     }
@@ -132,9 +139,9 @@ public class MainLoop : MonoBehaviour {
     public void damageAllInArea(GameObject theTower){
         foreach (EnemyClass anEnemy in myEnemies)
         {
-            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<Tower>().BaseDamage)
+            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().BaseDamage)
             {
-                anEnemy.enemyScript.takeDamage(theTower.GetComponent<Tower>().BaseDamage);
+                anEnemy.enemyScript.takeDamage(theTower.GetComponent<AbstractTower>().BaseDamage);
             }
         }
     }
@@ -144,40 +151,46 @@ public class MainLoop : MonoBehaviour {
     public Enemy getBestTarget(GameObject theTower)
     {
         List<EnemyClass> inRangeEnemies = new List<EnemyClass>();
-        EnemyClass bestEnemy = myEnemies[0];
-        foreach(EnemyClass anEnemy in myEnemies)
+        if (myEnemies.Count != 0)//Range checking will ensure a swift victory
         {
-            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<Tower>().BaseDamage)
-            {
-                inRangeEnemies.Add(anEnemy);
-            }
-        }
-        int bestStage = 0;
-        float lowestDistance = 1000000f;
-       
-        foreach (EnemyClass anEnemy in inRangeEnemies)
-        {
-            if (anEnemy.enemyScript.stage > bestStage)
-            {
-                bestStage = anEnemy.enemyScript.stage;
-            }
-        }
+            EnemyClass bestEnemy = myEnemies[0];
 
-        foreach (EnemyClass anEnemy in inRangeEnemies)
-        {
-            if (anEnemy.enemyScript.stage == bestStage)
+            foreach (EnemyClass anEnemy in myEnemies)
             {
-                float tempDist = Vector3.Distance(anEnemy.enemyScript.target, anEnemy.theEnemy.transform.position);
-                if (tempDist < lowestDistance)
+                if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().BaseDamage)
                 {
-                    lowestDistance = tempDist;
-                    bestEnemy = anEnemy;
+                    inRangeEnemies.Add(anEnemy);
                 }
             }
-        }
-        return bestEnemy.enemyScript;
-    }
+            int bestStage = 0;
+            float lowestDistance = 1000000f; //Oh no. Lookout its a Snip...! *thud*
 
+            foreach (EnemyClass anEnemy in inRangeEnemies)
+            {
+                if (anEnemy.enemyScript.stage > bestStage)
+                {
+                    bestStage = anEnemy.enemyScript.stage;
+                }
+            }
+
+            foreach (EnemyClass anEnemy in inRangeEnemies)
+            {
+                if (anEnemy.enemyScript.stage == bestStage)
+                {
+                    float tempDist = Vector3.Distance(anEnemy.enemyScript.target, anEnemy.theEnemy.transform.position);
+                    if (tempDist < lowestDistance)
+                    {
+                        lowestDistance = tempDist;
+                        bestEnemy = anEnemy;
+                    }
+                }
+            }
+            return bestEnemy.enemyScript;
+        } else {
+            Debug.Log("No enemies found");
+            return null;
+        }
+    } 
     public void giveNextWaypoint(Enemy someEnemy)
     {
         if (someEnemy.stage == 1)
@@ -212,12 +225,19 @@ public class MainLoop : MonoBehaviour {
     //Kill an enemy. They call this function usually
     public void killEnemy(GameObject someObject)
     {
-        foreach(EnemyClass Enmy in myEnemies){
-            if (Enmy.theEnemy == someObject) {
-                myEnemies.Remove(Enmy);
-                someObject.GetComponent<Enemy>().killMyself();
+        if (myEnemies.Count != 0) //Range checking will ensure a swift victory
+        {
+            foreach (EnemyClass Enmy in myEnemies)
+            {
+                if (Enmy.theEnemy == someObject)
+                {
+                    myEnemies.Remove(Enmy);
+                    someObject.GetComponent<Enemy>().killMyself();
+                }
             }
         }
+        else Debug.Log("No enemies to drop beats on");
+
     }
 
     public void killTower(GameObject someObject)
@@ -250,12 +270,12 @@ public class MainLoop : MonoBehaviour {
     private class TowerClass
     {
         public GameObject theTower;
-        public Tower towerScript;
+        public AbstractTower towerScript;
 
         public TowerClass(GameObject aTower)
         {
             theTower = aTower;
-            towerScript = aTower.GetComponent<Tower>();
+            towerScript = aTower.GetComponent<AbstractTower>();
         }
     }
 

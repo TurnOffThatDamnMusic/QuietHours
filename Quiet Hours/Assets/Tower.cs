@@ -27,7 +27,7 @@ public class Tower : MonoBehaviour {
     {
         //Every few seconds
         timeStamp = Time.time + fireCoolDown;
-        while (timeStamp >= Time.time)
+        while (timeStamp >= Time.time) //This will infinite loop; Use AbstractTower
         {
 
         }

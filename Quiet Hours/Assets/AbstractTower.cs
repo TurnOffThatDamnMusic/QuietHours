@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(AudioSource))]
+//[RequireComponent(typeof(AudioSource))]
 public class AbstractTower : MonoBehaviour {
 
     public double BaseCost;
@@ -16,7 +16,8 @@ public class AbstractTower : MonoBehaviour {
     public float audioLevel;
 
     public float timeStamp;
-    public float fireCoolDown = 1.0F;
+    public float fireCoolDown = 0.2F;
+    private float nextFireTime = 0.0F;
     public MainLoop theLoop;
 
     private AudioSource audiosrc;
@@ -29,36 +30,37 @@ public class AbstractTower : MonoBehaviour {
         if (IsFiring == true)
         {
             //Commented below line out
-            //audiosrc.PlayOneShot(TowerBeat, audioLevel);
+            audiosrc.PlayOneShot(TowerBeat, audioLevel);
             //yield WaitForSeconds(BeatRate);
         }
     }
 	// Use this for initialization
 	void Start () {
         theLoop = GameObject.Find("MainGame").GetComponent<MainLoop>();
-        //audiosrc = GetComponent<AudioSource>(); //assigns audio source to be played
+        if (theLoop != null) Debug.Log("MainGame object found");
+
+        audiosrc = GetComponent<AudioSource>(); //assigns audio source to be played
+        if(audiosrc != null) Debug.Log("Audiosource found");
     }
 	// Update is called once per frame
 	void Update () {
-        //Every few seconds
-        timeStamp = Time.time + fireCoolDown;
-        while(timeStamp >= Time.time)
+        //Cooldown code
+        if (Time.time > nextFireTime)
         {
-
+            nextFireTime = Time.time + fireCoolDown;
+            theLoop.damageAllInArea(gameObject);
+            Enemy tempEnemy = theLoop.getBestTarget(gameObject);
+            doDamage(tempEnemy);
         }
-
-        theLoop.damageAllInArea(gameObject);
-        //Enemy tempEnemy = theLoop.getBestTarget(gameObject);
-        //doDamage(tempEnemy);
-
+        else Debug.Log("Bass Canon cooling down: " + nextFireTime + " | " + Time.time);
     }
 
     public void doDamage(Enemy someEnemy)
     {
-        someEnemy.takeDamage(BaseDamage);
+        timeStamp = Time.time + fireCoolDown;
+        //someEnemy.takeDamage(BaseDamage);
+        Debug.Log("Ima firin ma lazer");
     }
-
-    /*
     class Projectile
     {
         public List<Enemy> targetList = new List<Enemy>();
@@ -88,5 +90,4 @@ public class AbstractTower : MonoBehaviour {
 
 
     }
-     */
 }

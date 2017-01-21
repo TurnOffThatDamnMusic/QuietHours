@@ -17,6 +17,7 @@ public class Enemy : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         currentHealth = MaxHealth;
+        Debug.Log("I'm Alive: " + currentHealth);
 	}
 	
 	// Update is called once per frame
@@ -39,18 +40,21 @@ public class Enemy : MonoBehaviour {
         currentHealth -= damageTaken;
         if (currentHealth <= 0)
         {
+            Debug.Log("I is kill. RIP.");
             killMe();
         }
-        Debug.Log("The unit was damaged!");
+        Debug.Log("The unit was damaged! Current Health: " + currentHealth);
     }
 
     private void killMe()
     {
         theLoop.killEnemy(this.gameObject);
+        Debug.Log("Call to mainloop to kill an enemy");
     }
 
     public void killMyself()
     {
+        Debug.Log("Call to destroy enemy game object");
         Destroy(this);
     }
 }

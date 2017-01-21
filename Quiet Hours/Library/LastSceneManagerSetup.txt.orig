@@ -1,11 +1,8 @@
 sceneSetups:
 <<<<<<< HEAD
-- path: Assets/Scene Folder/startmenu.unity
+- path: Assets/PaulsTestScene2.unity
 =======
-- path: Assets/PaulsScene.unity
-  isLoaded: 0
-  isActive: 0
 - path: Assets/GarrettTestScene.unity
->>>>>>> 5e5393da85437e6e3106918b366c3c3490b976b4
+>>>>>>> b51db75292b86257b6174b9f75140da665e2e1d5
   isLoaded: 1
   isActive: 1
