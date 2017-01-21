@@ -8,13 +8,15 @@ public class AbstractTower : MonoBehaviour {
     public double BaseCost;
     public double fireRate;
     public double UpgradeCost;
-    public double BaseDamage;
+    public int BaseDamage;
     public double BaseFirerate;
     public int BeatRate; //Sponsored by DJ Lucio
     public GameObject CurrentTarget;
     public bool isSelected = false;
     public AudioClip TowerBeat;
     public float audioLevel;
+
+    public MainLoop theLoop;
 
     private AudioSource audiosrc;
     private bool IsFiring;
@@ -35,6 +37,14 @@ public class AbstractTower : MonoBehaviour {
     }
 	// Update is called once per frame
 	void Update () {
-		
+		//Every few seconds
+        //TODO : Timing and when to actually fire
+        Enemy tempEnemy = theLoop.getBestTarget();
+        doDamage(tempEnemy);
 	}
+
+    public void doDamage(Enemy someEnemy)
+    {
+        someEnemy.takeDamage(BaseDamage);
+    }
 }

@@ -35,6 +35,20 @@ public class MainLoop : MonoBehaviour {
 
     }
 
+    public Enemy getBestTarget(GameObject theTower)
+    {
+        EnemyClass closestEnemy = myEnemies[0];
+        foreach(EnemyClass anEnemy in myEnemies)
+        {
+            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < Vector3.Distance(theTower.transform.position, closestEnemy.theEnemy.transform.position))
+            {
+                closestEnemy = anEnemy;
+            }
+        }
+
+        return closestEnemy.enemyScript;
+    }
+
     public void giveNextWaypoint(Enemy someEnemy)
     {
         if (someEnemy.stage == 1)
