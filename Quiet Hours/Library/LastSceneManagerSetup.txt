@@ -1,4 +1,5 @@
 sceneSetups:
 - path: Assets/PaulsScene.unity
-  isLoaded: 1
-  isActive: 1
+- path: Assets/GarrettTestScene.unity
+  isLoaded: 2
+  isActive: 2

@@ -1,0 +1,8 @@
+sceneSetups:
+<<<<<<< HEAD
+- path: Assets/PaulsScene.unity
+=======
+- path: Assets/GarrettTestScene.unity
+>>>>>>> 54494fde3b4a5a8ef88217296bca10fed19111d1
+  isLoaded: 1
+  isActive: 1
