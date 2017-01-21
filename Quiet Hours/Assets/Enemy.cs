@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour {
     //Used by this object
     public int currentHealth;
     public MainLoop theLoop;
-    public Transform target;
+    public Vector3 target;
     public int stage;
 
 	// Use this for initialization
@@ -22,8 +22,8 @@ public class Enemy : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, target.position, step);
-        if (transform.position == target.position)
+        transform.position = Vector3.MoveTowards(transform.position, target, step);
+        if (Vector3.Distance(transform.position, target) < .05)
         {
             changeTarget();
         }

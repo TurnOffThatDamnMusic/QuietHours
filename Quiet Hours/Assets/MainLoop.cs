@@ -6,18 +6,31 @@ public class MainLoop : MonoBehaviour {
 
     private List<EnemyClass> myEnemies;
     private List<TowerClass> myTowers;
+    public GameObject baseEnemy;
 
-    public Transform Waypoint1;
-    public Transform Waypoint2;
-    public Transform Waypoint3;
-    public Transform Waypoint4;
-    public Transform Waypoint5;
-    public Transform Waypoint6;
+    //Used by the enemies to pathfind
+    public Vector3 Waypoint1;
+    public Vector3 Waypoint2;
+    public Vector3 Waypoint3;
+    public Vector3 Waypoint4;
+    public Vector3 Waypoint5;
+    public Vector3 Waypoint6;
+    public Vector3 Waypoint7;
 
 	// Use this for initialization
 	void Start () {
         myEnemies = new List<EnemyClass>();
         myTowers = new List<TowerClass>();
+        Waypoint1 = new Vector3(-4.0f, 0.0f);
+        Waypoint2 = new Vector3(-4.0f, 5.0f);
+        Waypoint3 = new Vector3(0.0f, 5.0f);
+        Waypoint4 = new Vector3(0.0f, -5.0f);
+        Waypoint5 = new Vector3(4.0f, -5.0f);
+        Waypoint6 = new Vector3(4.0f, 0.0f);
+        Waypoint7 = new Vector3(8.0f, 0.0f);
+
+        instantiateEnemy();
+
 	}
 	
 	// Update is called once per frame
@@ -32,7 +45,12 @@ public class MainLoop : MonoBehaviour {
 
     public void instantiateEnemy()
     {
-
+        GameObject tempEnemy = (GameObject)Instantiate(baseEnemy);
+        EnemyClass anotherTemp = new EnemyClass(tempEnemy);
+        anotherTemp.enemyScript.theLoop = this;
+        anotherTemp.enemyScript.target = Waypoint1;
+        anotherTemp.enemyScript.stage = 1;
+        myEnemies.Add(anotherTemp);
     }
 
     public Enemy getBestTarget(GameObject theTower)
@@ -66,10 +84,16 @@ public class MainLoop : MonoBehaviour {
         {
             someEnemy.target = Waypoint5;
         }
-        else
+        else if(someEnemy.stage == 5)
         {
             someEnemy.target = Waypoint6;
         }
+        else
+        {
+            someEnemy.target = Waypoint7;
+        }
+
+        someEnemy.stage++;
     }
 
 
