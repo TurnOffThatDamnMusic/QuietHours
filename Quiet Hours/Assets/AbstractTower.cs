@@ -6,7 +6,6 @@ using UnityEngine;
 public class AbstractTower : MonoBehaviour {
 
     public double BaseCost;
-    public double fireRate;
     public double UpgradeCost;
     public int BaseDamage;
     public double BaseFirerate;
@@ -16,6 +15,8 @@ public class AbstractTower : MonoBehaviour {
     public AudioClip TowerBeat;
     public float audioLevel;
 
+    public float timeStamp;
+    public float fireCoolDown = 1.0F;
     public MainLoop theLoop;
 
     private AudioSource audiosrc;
@@ -37,14 +38,49 @@ public class AbstractTower : MonoBehaviour {
     }
 	// Update is called once per frame
 	void Update () {
-		//Every few seconds
-        //TODO : Timing and when to actually fire
-        Enemy tempEnemy = theLoop.getBestTarget(gameObject);
-       // doDamage(tempEnemy);
-	}
+        //Every few seconds
+        timeStamp = Time.time + fireCoolDown;
+        if(timeStamp <= Time.time)
+        {
+            //TODO : Timing and when to actually fire
+            Enemy tempEnemy = theLoop.getBestTarget(gameObject);
+            // doDamage(tempEnemy);
+        }
+
+    }
 
     public void doDamage(Enemy someEnemy)
     {
         someEnemy.takeDamage(BaseDamage);
+    }
+
+    class Projectile
+    {
+        public List<Enemy> targetList = new List<Enemy>();
+        public Enemy currentTarget; //Assigns the current target of the bounce
+        public GameObject projectile;
+        public int bounceNumber; //Number of bounces before sound wave is absorbed/is dampened
+        public float BlastRadius;
+        public float range;
+        public double cooldown;
+
+        public void addTarget(Enemy e)
+        {
+            targetList.Add(e);
+        }
+
+        //BongoCongo blat blat....MUMUMUMUMULTI-KILL_KILl_kill
+        public void bounceAttack()
+        {
+            int currentBounces = 0;
+            foreach(Enemy partypooper in targetList) {
+                if(currentBounces < bounceNumber)
+                {
+                    
+                }
+            }
+        }
+
+
     }
 }
