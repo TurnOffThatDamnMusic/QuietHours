@@ -39,8 +39,8 @@ public class AbstractTower : MonoBehaviour {
 	void Update () {
 		//Every few seconds
         //TODO : Timing and when to actually fire
-        Enemy tempEnemy = theLoop.getBestTarget();
-        doDamage(tempEnemy);
+        //Enemy tempEnemy = theLoop.getBestTarget();
+       // doDamage(tempEnemy);
 	}
 
     public void doDamage(Enemy someEnemy)
