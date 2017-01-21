@@ -41,6 +41,7 @@ public class Enemy : MonoBehaviour {
         {
             killMe();
         }
+        Debug.Log("The unit was damaged!");
     }
 
     private void killMe()

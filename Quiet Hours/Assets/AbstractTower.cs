@@ -28,24 +28,28 @@ public class AbstractTower : MonoBehaviour {
     {
         if (IsFiring == true)
         {
-            audiosrc.PlayOneShot(TowerBeat, audioLevel);
+            //Commented below line out
+            //audiosrc.PlayOneShot(TowerBeat, audioLevel);
             //yield WaitForSeconds(BeatRate);
         }
     }
 	// Use this for initialization
 	void Start () {
-        audiosrc = GetComponent<AudioSource>(); //assigns audio source to be played
+        theLoop = GameObject.Find("MainGame").GetComponent<MainLoop>();
+        //audiosrc = GetComponent<AudioSource>(); //assigns audio source to be played
     }
 	// Update is called once per frame
 	void Update () {
         //Every few seconds
         timeStamp = Time.time + fireCoolDown;
-        if(timeStamp <= Time.time)
+        while(timeStamp >= Time.time)
         {
-            //TODO : Timing and when to actually fire
-            Enemy tempEnemy = theLoop.getBestTarget(gameObject);
-            // doDamage(tempEnemy);
+
         }
+
+        theLoop.damageAllInArea(gameObject);
+        //Enemy tempEnemy = theLoop.getBestTarget(gameObject);
+        //doDamage(tempEnemy);
 
     }
 
@@ -54,6 +58,7 @@ public class AbstractTower : MonoBehaviour {
         someEnemy.takeDamage(BaseDamage);
     }
 
+    /*
     class Projectile
     {
         public List<Enemy> targetList = new List<Enemy>();
@@ -83,4 +88,5 @@ public class AbstractTower : MonoBehaviour {
 
 
     }
+     */
 }

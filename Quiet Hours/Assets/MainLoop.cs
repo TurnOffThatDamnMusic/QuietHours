@@ -132,9 +132,9 @@ public class MainLoop : MonoBehaviour {
     public void damageAllInArea(GameObject theTower){
         foreach (EnemyClass anEnemy in myEnemies)
         {
-            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().BaseDamage)
+            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<Tower>().BaseDamage)
             {
-                anEnemy.enemyScript.takeDamage(theTower.GetComponent<AbstractTower>().BaseDamage);
+                anEnemy.enemyScript.takeDamage(theTower.GetComponent<Tower>().BaseDamage);
             }
         }
     }
@@ -147,7 +147,7 @@ public class MainLoop : MonoBehaviour {
         EnemyClass bestEnemy = myEnemies[0];
         foreach(EnemyClass anEnemy in myEnemies)
         {
-            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().BaseDamage)
+            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<Tower>().BaseDamage)
             {
                 inRangeEnemies.Add(anEnemy);
             }
@@ -250,12 +250,12 @@ public class MainLoop : MonoBehaviour {
     private class TowerClass
     {
         public GameObject theTower;
-        public AbstractTower towerScript;
+        public Tower towerScript;
 
         public TowerClass(GameObject aTower)
         {
             theTower = aTower;
-            towerScript = aTower.GetComponent<AbstractTower>();
+            towerScript = aTower.GetComponent<Tower>();
         }
     }
 
