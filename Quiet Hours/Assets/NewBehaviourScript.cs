@@ -7,5 +7,6 @@ public class NewBehaviourScript : MonoBehaviour {
 	public void LoadScene(int level)
     {
         Application.LoadLevel(level);
+        
     }
 }
