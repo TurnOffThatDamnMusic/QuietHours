@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 
 public class Description : MonoBehaviour {
+   
     public Text test;
     public bool visible;
 
@@ -32,4 +33,12 @@ public class Description : MonoBehaviour {
     {
         test.text = body;
     }
+     
 }
+
+
+
+
+
+
+

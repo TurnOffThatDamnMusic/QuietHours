@@ -29,6 +29,8 @@ public class MainLoop : MonoBehaviour {
 
     float timeGo;
 
+    GameObject currentBuild;
+
 	// Use this for initialization
 	void Start () {
         myEnemies = new List<EnemyClass>();
@@ -120,9 +122,21 @@ public class MainLoop : MonoBehaviour {
         }
 	}
 
-    public void instantiateTower(GameObject someObject)
+    public void instantiateTower(GameObject placeToMake)
     {
-        
+        GameObject theTower = (GameObject)Instantiate(currentBuild, placeToMake.transform.position, Quaternion.identity);
+        foreach (Square aSquare in squares)
+        {
+            if (aSquare.position == placeToMake.transform.position)
+            {
+                aSquare.inUse = true;
+            }
+        }
+
+        foreach (GameObject aBox in boxes)
+        {
+            Destroy(aBox);
+        }
     }
 
     public void instantiateEnemy()
@@ -271,6 +285,29 @@ public class MainLoop : MonoBehaviour {
     }
 
 
+    public void readyToBuild(GameObject someObject)
+    {
+        currentBuild = someObject;
+        foreach (Square aSquare in squares)
+        {
+            if (aSquare.inUse)
+            {
+                GameObject tempBox = (GameObject)Instantiate(redBox, aSquare.position, Quaternion.identity);
+                boxes.Add(tempBox);
+            }
+            else
+            {
+                GameObject tempBox = (GameObject)Instantiate(greenBox, aSquare.position, Quaternion.identity);
+                boxes.Add(tempBox);
+            }
+        }
+    }
+
+
+    public void builtAtSquare(GameObject someObject)
+    {
+        instantiateTower(someObject);
+    }
 
     //Kill an enemy. They call this function usually
     public void killEnemy(GameObject someObject)

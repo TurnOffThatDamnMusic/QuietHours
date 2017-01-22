@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,5 +37,6 @@ public class visible : MonoBehaviour {
         //vis = false;
         Description.color = new Color(1, 1, 1, 0);
 
-    }*/
+    }
 }
+ * */
