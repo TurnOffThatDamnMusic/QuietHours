@@ -30,10 +30,12 @@ public class AbstractTower : MonoBehaviour {
     private AudioSource audiosrc;
     private bool IsFiring;
 
+<<<<<<< HEAD
     public GameObject coconut;
     public float coconutRange;
 
     private List<Coco> theCocos;
+=======
     /**
       *  Projectile Variables
       *  
@@ -49,6 +51,7 @@ public class AbstractTower : MonoBehaviour {
     public float BlastRadius;
     public float Velocity;
     public float rotSpeed = 90.0F;
+>>>>>>> ac7b7faff538c0b43bccdd5238c01821d432a61a
 
 
     //Plays the set audio clip one time
@@ -80,10 +83,12 @@ public class AbstractTower : MonoBehaviour {
             //nextCustomer();
         }
     }
+<<<<<<< HEAD
 	// Use this for initialization
 	void Start () {
         theCocos = new List<Coco>();
 
+=======
 
     /**
     * Moves Projectile to the next enemy
@@ -97,6 +102,7 @@ public class AbstractTower : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
+>>>>>>> ac7b7faff538c0b43bccdd5238c01821d432a61a
         theLoop = GameObject.Find("MainGame").GetComponent<MainLoop>();
         if (theLoop != null) Debug.Log("MainGame object found");
 
