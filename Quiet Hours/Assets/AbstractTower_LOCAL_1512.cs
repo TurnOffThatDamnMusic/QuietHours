@@ -108,7 +108,7 @@ public class AbstractTower : MonoBehaviour {
         //Updating the cocos and keeping them moving
         foreach (Coco aCoco in theCocos)
         {
-            if (aCoco.currentBounce > aCoco.maxBounce)
+            if (aCoco.currentBounce > 3)
             {
                 Destroy(aCoco.theCoco);
                 theCocos.Remove(aCoco);
@@ -117,7 +117,7 @@ public class AbstractTower : MonoBehaviour {
             {
                 if (aCoco != null && aCoco.currentTarget != null)
                 {
-                    float step = aCoco.speed * Time.deltaTime;
+                    float step = 10.0f * Time.deltaTime;
                     aCoco.theCoco.transform.position = Vector3.MoveTowards(aCoco.theCoco.transform.position, aCoco.currentTarget.transform.position, step);
 
                     if (Vector3.Distance(aCoco.theCoco.transform.position, aCoco.currentTarget.transform.position) < .1)
@@ -142,15 +142,7 @@ public class AbstractTower : MonoBehaviour {
                 {
                     Enemy tempEnemy = theEnemy.GetComponent<Enemy>();
                     doDamage(tempEnemy);
-<<<<<<< HEAD
                     //playAudio();
-=======
-
-                    GameObject tempCoco = (GameObject)Instantiate(coconut, transform.position, Quaternion.identity);
-
-                    Coco aCoco = new Coco(tempCoco, theEnemy, 0, 15f);
-                    theCocos.Add(aCoco);
->>>>>>> 8230e2cf8eb3fe3ac8eed3c748bb5539f61b4f2d
                     //Debug.Log("The enemy position is x : " + theEnemy.transform.position.x + " y :  " + theEnemy.transform.position.y + " z : " + theEnemy.transform.position.z);
 
                     //Look at the target
@@ -188,7 +180,7 @@ public class AbstractTower : MonoBehaviour {
 
                     GameObject tempCoco = (GameObject)Instantiate(coconut, transform.position, Quaternion.identity);
 
-                    Coco aCoco = new Coco(tempCoco, theEnemy, 3, 10f);
+                    Coco aCoco = new Coco(tempCoco, theEnemy);
                     theCocos.Add(aCoco);
 
                     nextFireTime = Time.time + fireCoolDown;
@@ -203,16 +195,12 @@ public class AbstractTower : MonoBehaviour {
         public int currentBounce;
         public GameObject theCoco;
         public GameObject currentTarget;
-        public int maxBounce;
-        public float speed;
 
-        public Coco(GameObject aCoco, GameObject aTarget, int max, float spee)
+        public Coco(GameObject aCoco, GameObject aTarget)
         {
             theCoco = aCoco;
             currentBounce = 0;
             currentTarget = aTarget;
-            maxBounce = max;
-            speed = spee;
         }
     }
 

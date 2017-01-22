@@ -231,11 +231,9 @@ public class MainLoop : MonoBehaviour {
             }
             else
             {
-                Debug.Log("No best enemy found");
                 return null;
             }
         } else {
-            Debug.Log("No enemies found");
             return null;
         }
     } 
