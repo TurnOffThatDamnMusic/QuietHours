@@ -27,12 +27,20 @@ public class Enemy : MonoBehaviour {
         if (Vector3.Distance(transform.position, target) < .05)
         {
             changeTarget();
+            Vector3 dir = target - transform.position;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, 0f, angle + 90);
         }
 	}
 
     void changeTarget()
     {
         theLoop.giveNextWaypoint(this);
+        if (stage == 7)
+        {
+            //Damage the house before you die
+            killMe();
+        }
     }
 
     public void takeDamage(int damageTaken)
