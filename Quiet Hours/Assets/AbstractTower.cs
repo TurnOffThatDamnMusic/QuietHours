@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 
-//[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(AudioSource))]
 public class AbstractTower : MonoBehaviour {
 
     public double BaseCost;
@@ -13,8 +13,8 @@ public class AbstractTower : MonoBehaviour {
     public int BeatRate; //Sponsored by DJ Lucio
     public GameObject CurrentTarget;
     public bool isSelected = false;
-    public List<AudioClip> TowerBeats; //Holds all audioclips for tower/projectile sounds
-    public float audioLevel; //Sound level
+    public AudioClip[] TowerBeats = new AudioClip[1]; //Holds all audioclips for tower/projectile sounds
+    public float audioLevel = 0.5F; //Sound level
     public float range;
 
     public enum towerType { SingleTarget, AOE, Cocount };
@@ -50,16 +50,15 @@ public class AbstractTower : MonoBehaviour {
     public float Velocity;
     public float rotSpeed = 90.0F;
 
-
     //Plays the set audio clip one time
     void playAudio()
     {
-        //AudioClip currentBeat;
-        if (TowerBeats.Count > 1)
+
+        if (TowerBeats.Length > 1)
         {
-            int rIndex = Random.Range(0, TowerBeats.Count-1); //Randomly select an audioclip to play   
+            int rIndex = Random.Range(0, TowerBeats.Length); //Randomly select an audioclip to play 
             audiosrc.PlayOneShot(TowerBeats[rIndex], audioLevel);
-            //yield WaitForSeconds(BeatRate)
+
         } else
         {
             audiosrc.PlayOneShot(TowerBeats[0], audioLevel);
@@ -67,12 +66,15 @@ public class AbstractTower : MonoBehaviour {
     }
 	// Use this for initialization
 	void Start () {
+        audiosrc = gameObject.GetComponent<AudioSource>();
+        if (audiosrc == null) Debug.Log("Audio Source is null");
+        else Debug.Log("Audio Source found!");
         theCocos = new List<Coco>();
         theLoop = GameObject.Find("MainGame").GetComponent<MainLoop>();
         if (theLoop != null) Debug.Log("MainGame object found");
 
         audiosrc = GetComponent<AudioSource>(); //assigns audio source to be played
-        if(audiosrc != null) Debug.Log("Audiosource found");
+        if (audiosrc != null) Debug.Log("Audiosource found"); else Debug.Log("Audiosource NOT found!!!");
     }
     //BongoCongo blat blat....MUMUMUMUMULTI-KILL_KILl_kill
     public void CoconutAttack(Coco aCoco)
@@ -80,6 +82,8 @@ public class AbstractTower : MonoBehaviour {
         aCoco.currentBounce++;
         GameObject jumpTarget = theLoop.getRandomInRange(aCoco.theCoco, coconutRange);
         doDamage(jumpTarget.GetComponent<Enemy>());
+        Debug.Log("Playing Coconut attack sound");
+        playAudio();
         if (jumpTarget != null)
         {
             Debug.Log("We are getting a legit jump target");
@@ -106,7 +110,7 @@ public class AbstractTower : MonoBehaviour {
         //Updating the cocos and keeping them moving
         foreach (Coco aCoco in theCocos)
         {
-            if (aCoco.currentBounce > 3)
+            if (aCoco.currentBounce > aCoco.maxBounce)
             {
                 Destroy(aCoco.theCoco);
                 theCocos.Remove(aCoco);
@@ -115,7 +119,7 @@ public class AbstractTower : MonoBehaviour {
             {
                 if (aCoco != null && aCoco.currentTarget != null)
                 {
-                    float step = 10.0f * Time.deltaTime;
+                    float step = aCoco.speed * Time.deltaTime;
                     aCoco.theCoco.transform.position = Vector3.MoveTowards(aCoco.theCoco.transform.position, aCoco.currentTarget.transform.position, step);
 
                     if (Vector3.Distance(aCoco.theCoco.transform.position, aCoco.currentTarget.transform.position) < .1)
@@ -138,10 +142,14 @@ public class AbstractTower : MonoBehaviour {
                 
                 if (theEnemy != null)
                 {
-                    Debug.Log("The Enemy is not NULL");
                     Enemy tempEnemy = theEnemy.GetComponent<Enemy>();
                     doDamage(tempEnemy);
+                    playAudio();
 
+                    GameObject tempCoco = (GameObject)Instantiate(coconut, transform.position, Quaternion.identity);
+
+                    Coco aCoco = new Coco(tempCoco, theEnemy, 0, 15f);
+                    theCocos.Add(aCoco);
                     //Debug.Log("The enemy position is x : " + theEnemy.transform.position.x + " y :  " + theEnemy.transform.position.y + " z : " + theEnemy.transform.position.z);
 
                     //Look at the target
@@ -153,15 +161,12 @@ public class AbstractTower : MonoBehaviour {
                     Debug.Log("The single target tower is firing");
                     nextFireTime = Time.time + fireCoolDown;
                 }
-                else
-                {
-                    Debug.Log("No target is found");
-                }
             }
 
             else if (myTowerType == towerType.AOE)
             {
                 theLoop.damageAllInArea(gameObject);
+                playAudio();
                 Debug.Log("The AOE tower is firing");
                 nextFireTime = Time.time + fireCoolDown;
             }
@@ -174,6 +179,7 @@ public class AbstractTower : MonoBehaviour {
                 {
                     Enemy tempEnemy = theEnemy.GetComponent<Enemy>();
                     doDamage(tempEnemy);
+                    playAudio();
 
                     //Look at the target
                     //Vector3 dir = theEnemy.transform.position - transform.position;
@@ -182,16 +188,11 @@ public class AbstractTower : MonoBehaviour {
 
                     GameObject tempCoco = (GameObject)Instantiate(coconut, transform.position, Quaternion.identity);
 
-                    Coco aCoco = new Coco(tempCoco, theEnemy);
+                    Coco aCoco = new Coco(tempCoco, theEnemy, 3, 10f);
                     theCocos.Add(aCoco);
 
                     nextFireTime = Time.time + fireCoolDown;
 
-                }
-
-                else
-                {
-                    Debug.Log("No target is found");
                 }
             }
         }
@@ -202,12 +203,16 @@ public class AbstractTower : MonoBehaviour {
         public int currentBounce;
         public GameObject theCoco;
         public GameObject currentTarget;
+        public int maxBounce;
+        public float speed;
 
-        public Coco(GameObject aCoco, GameObject aTarget)
+        public Coco(GameObject aCoco, GameObject aTarget, int max, float spee)
         {
             theCoco = aCoco;
             currentBounce = 0;
             currentTarget = aTarget;
+            maxBounce = max;
+            speed = spee;
         }
     }
 
