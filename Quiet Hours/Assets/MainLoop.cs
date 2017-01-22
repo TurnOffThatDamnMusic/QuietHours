@@ -1,44 +1,142 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class MainLoop : MonoBehaviour {
 
     private List<EnemyClass> myEnemies;
     private List<TowerClass> myTowers;
+    public GameObject baseEnemy;
+    public GameObject redBox;
+    public GameObject greenBox;
 
-    public Transform Waypoint1;
-    public Transform Waypoint2;
-    public Transform Waypoint3;
-    public Transform Waypoint4;
-    public Transform Waypoint5;
-    public Transform Waypoint6;
+    //Used by the enemies to pathfind
+    public Vector3 Waypoint1;
+    public Vector3 Waypoint2;
+    public Vector3 Waypoint3;
+    public Vector3 Waypoint4;
+    public Vector3 Waypoint5;
+    public Vector3 Waypoint6;
+    public Vector3 Waypoint7;
+
+    //List of boxes to destroy later
+    private List<GameObject> boxes;
+    //Useable Squares
+    private List<Square> squares;
+
+    float timeGo;
 
 	// Use this for initialization
 	void Start () {
         myEnemies = new List<EnemyClass>();
         myTowers = new List<TowerClass>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+        boxes = new List<GameObject>();
+        squares = new List<Square>();
+        Waypoint1 = new Vector3(-4.0f, 0.0f);
+        Waypoint2 = new Vector3(-4.0f, 5.0f);
+        Waypoint3 = new Vector3(0.0f, 5.0f);
+        Waypoint4 = new Vector3(0.0f, -5.0f);
+        Waypoint5 = new Vector3(4.0f, -5.0f);
+        Waypoint6 = new Vector3(4.0f, 0.0f);
+        Waypoint7 = new Vector3(8.0f, 0.0f);
+
+        instantiateEnemy();
+
+        for (int i = -7; i < 8; i++)
+        {
+            for (int j = -10; j < 12; j++)
+            {
+                //Waypoint 0 to Waypoint 1
+                if((j <= -4 && j>=-8) && (i == 0)){
+                    squares.Add(new Square(new Vector3(j, i), true));
+                }
+                //Waypoint 1 to Waypoint 2
+                else if ((j == -4) && (i <=5 && i >= 0))
+                {
+                    squares.Add(new Square(new Vector3(j, i), true));
+                }
+                //Waypoint 2 to Waypoint 3
+                else if((j<=0 && j >= -4) &&(i == 5)){
+                    squares.Add(new Square(new Vector3(j, i), true));
+                }
+                //Waypoint 3 to Waypoint 4
+                else if((j==0) && (i >= -5 && i <=5)){
+                    squares.Add(new Square(new Vector3(j, i), true));
+                }        
+                //Waypoint 4 to Waypoint 5
+                else if((j >= 0 && j <= 4) && (i == -5)){
+                    squares.Add(new Square(new Vector3(j, i), true));
+                }
+                //Waypoint 5 to Waypoint 6
+                else if((j == 4) && (i >= -5 && i <= 0)){
+                    squares.Add(new Square(new Vector3(j, i), true));
+                }
+                //Waypoint 6 to Waypoint 7
+                else if((j >= 4 && j <= 8) && (i == 0)){
+                    squares.Add(new Square(new Vector3(j, i), true));
+                }
+                else
+                {
+                    squares.Add(new Square(new Vector3(j, i), false));
+                }
+            }
+        }
+
+        /*
+        foreach (Square aSquare in squares)
+        {
+            if (aSquare.inUse)
+            {
+                GameObject tempBox = (GameObject)Instantiate(redBox, aSquare.position, Quaternion.identity);
+            }
+            else
+            {
+                GameObject tempBox = (GameObject)Instantiate(greenBox, aSquare.position, Quaternion.identity);
+            }
+        }
+         * */
+
+        timeGo = Time.time;
+
 	}
 
-    public void intantiateTower(Object someObject)
+    // Update is called once per frame
+    // Spawn enemies
+    int maxEnemies = 15;
+    int currentEnemies = 1;
+    void Update () {
+        float currentTime = Time.time;
+		if(currentEnemies < maxEnemies)
+        {
+            if (Time.time - timeGo > .2)
+            {
+                currentEnemies++;
+                instantiateEnemy();
+                timeGo = Time.time;
+            }
+        }
+	}
+
+    public void instantiateTower(GameObject someObject)
     {
         
     }
 
     public void instantiateEnemy()
     {
-
+        GameObject tempEnemy = (GameObject)Instantiate(baseEnemy);
+        EnemyClass anotherTemp = new EnemyClass(tempEnemy);
+        anotherTemp.enemyScript.theLoop = this;
+        anotherTemp.enemyScript.target = Waypoint1;
+        anotherTemp.enemyScript.stage = 1;
+        myEnemies.Add(anotherTemp);
     }
 
-    public Enemy getBestTarget(GameObject theTower)
+    public Enemy getClosestTarget(GameObject theTower)
     {
-        EnemyClass closestEnemy = myEnemies[0];
-        foreach(EnemyClass anEnemy in myEnemies)
+        EnemyClass closestEnemy = null;
+        foreach (EnemyClass anEnemy in myEnemies)
         {
             if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < Vector3.Distance(theTower.transform.position, closestEnemy.theEnemy.transform.position))
             {
@@ -49,6 +147,98 @@ public class MainLoop : MonoBehaviour {
         return closestEnemy.enemyScript;
     }
 
+
+    public void damageAllInArea(GameObject theTower){
+        foreach (EnemyClass anEnemy in myEnemies)
+        {
+            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().range)
+            {
+                anEnemy.enemyScript.takeDamage(theTower.GetComponent<AbstractTower>().BaseDamage);
+            }
+        }
+    }
+
+    public GameObject getRandomInRange(GameObject anObject, float range)
+    {
+        List<EnemyClass> inRangeEnemies = new List<EnemyClass>();
+
+        if (myEnemies.Count != 0)
+        {
+            foreach (EnemyClass anEnemy in myEnemies)
+            {
+                if (Vector3.Distance(anObject.transform.position, anEnemy.theEnemy.transform.position) < range)
+                {
+                    inRangeEnemies.Add(anEnemy);
+                }
+            }
+            int rand = (int)(UnityEngine.Random.value * inRangeEnemies.Count);
+
+            //Debug.Log("Random is : " + rand);
+            return inRangeEnemies[rand].theEnemy;
+
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+    //TODO CHANGE DAMAGE TO RANGE
+    public GameObject getBestTarget(GameObject theTower, float range)
+    {
+        List<EnemyClass> inRangeEnemies = new List<EnemyClass>();
+        if (myEnemies.Count != 0)//Range checking will ensure a swift victory
+        {
+            EnemyClass bestEnemy = null;
+
+            foreach (EnemyClass anEnemy in myEnemies)
+            {
+                if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < range)
+                {
+                    Debug.Log("Enemy added");
+                    inRangeEnemies.Add(anEnemy);
+                }
+            }
+            int bestStage = 0;
+            float lowestDistance = 1000000f; //Oh no. Lookout its a Snip...! *thud*
+
+            //TODO; Optimize
+            foreach (EnemyClass anEnemy in inRangeEnemies)
+            {
+                if (anEnemy.enemyScript.stage > bestStage)
+                {
+                    bestStage = anEnemy.enemyScript.stage;
+                }
+            }
+
+            foreach (EnemyClass anEnemy in inRangeEnemies)
+            {
+                if (anEnemy.enemyScript.stage == bestStage)
+                {
+                    float tempDist = Vector3.Distance(anEnemy.enemyScript.target, anEnemy.theEnemy.transform.position);
+                    if (tempDist < lowestDistance)
+                    {
+                        lowestDistance = tempDist;
+                        bestEnemy = anEnemy;
+                    }
+                }
+            }
+            if (bestEnemy != null)
+            {
+                Debug.Log("Best Enemy Found");
+                return bestEnemy.theEnemy;
+            }
+            else
+            {
+                Debug.Log("No best enemy found");
+                return null;
+            }
+        } else {
+            Debug.Log("No enemies found");
+            return null;
+        }
+    } 
     public void giveNextWaypoint(Enemy someEnemy)
     {
         if (someEnemy.stage == 1)
@@ -66,10 +256,16 @@ public class MainLoop : MonoBehaviour {
         {
             someEnemy.target = Waypoint5;
         }
-        else
+        else if(someEnemy.stage == 5)
         {
             someEnemy.target = Waypoint6;
         }
+        else
+        {
+            someEnemy.target = Waypoint7;
+        }
+
+        someEnemy.stage++;
     }
 
 
@@ -77,12 +273,19 @@ public class MainLoop : MonoBehaviour {
     //Kill an enemy. They call this function usually
     public void killEnemy(GameObject someObject)
     {
-        foreach(EnemyClass Enmy in myEnemies){
-            if (Enmy.theEnemy == someObject) {
-                myEnemies.Remove(Enmy);
-                someObject.GetComponent<Enemy>().killMyself();
+        if (myEnemies.Count != 0) //Range checking will ensure a swift victory
+        {
+            foreach (EnemyClass Enmy in myEnemies)
+            {
+                if (Enmy.theEnemy == someObject)
+                {
+                    myEnemies.Remove(Enmy);
+                    someObject.GetComponent<Enemy>().killMyself();
+                }
             }
         }
+        else Debug.Log("No enemies to drop beats on");
+
     }
 
     public void killTower(GameObject someObject)
@@ -115,12 +318,24 @@ public class MainLoop : MonoBehaviour {
     private class TowerClass
     {
         public GameObject theTower;
-        //public Tower towerScript;
+        public AbstractTower towerScript;
 
         public TowerClass(GameObject aTower)
         {
             theTower = aTower;
-            //towerScript = aTower.GetComponent<Enemy>();
+            towerScript = aTower.GetComponent<AbstractTower>();
+        }
+    }
+
+    public class Square
+    {
+        public Vector3 position;
+        public bool inUse;
+
+        public Square(Vector3 squarePosition, bool use)
+        {
+            position = squarePosition;
+            inUse = use;
         }
     }
 }
