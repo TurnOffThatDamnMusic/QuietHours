@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Incaseitdidntsave.unity
+- path: Assets/PaulsTestScene.unity
   isLoaded: 1
   isActive: 1

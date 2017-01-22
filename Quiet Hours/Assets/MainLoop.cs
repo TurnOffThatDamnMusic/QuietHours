@@ -107,17 +107,22 @@ public class MainLoop : MonoBehaviour {
 
     // Update is called once per frame
     // Spawn enemies
-    int maxEnemies = 15;
+    int maxEnemies = 100000;
+    double someNum = 1;
     int currentEnemies = 1;
     void Update () {
         float currentTime = Time.time;
 		if(currentEnemies < maxEnemies)
         {
-            if (Time.time - timeGo > .2)
+            if (Time.time - timeGo > 3 * someNum)
             {
                 currentEnemies++;
                 instantiateEnemy();
                 timeGo = Time.time;
+                if (someNum > .05)
+                {
+                    someNum -= .05;
+                }
             }
         }
 	}
