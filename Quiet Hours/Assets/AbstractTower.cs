@@ -51,27 +51,59 @@ public class AbstractTower : MonoBehaviour {
         {
             if (myTowerType == towerType.SingleTarget)
             {
-                Enemy tempEnemy = theLoop.getBestTarget(gameObject);
-                doDamage(tempEnemy);
+                GameObject theEnemy = theLoop.getBestTarget(gameObject);
+                Enemy tempEnemy = theEnemy.GetComponent<Enemy>();
+                if (tempEnemy != null)
+                {
+                    doDamage(tempEnemy);
+
+                    Debug.Log("The enemy position is x : " + theEnemy.transform.position.x + " y :  " + theEnemy.transform.position.y + " z : " + theEnemy.transform.position.z);
+
+                    float step = 10f * Time.deltaTime;
+
+                    //Useful
+                    //Vector3 lookAt = transform.position - theEnemy.transform.position;
+                    
+                    //Vector3 newDir = Vector3.RotateTowards(transform.position, theEnemy.transform.position, step, 0.0F);
+                    
+                    //Useful
+                    //transform.rotation = Quaternion.LookRotation(lookAt);
+
+                    Vector3 dir = theEnemy.transform.position - transform.position; 
+                    float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg; 
+                    transform.GetChild(0).transform.rotation = Quaternion.Euler(0f, 0f, angle- 90);
+                    
+
+                    //transform.rotation.eulerAngles.Set(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, );
+
+                    Debug.Log("The single target tower is firing");
+                    nextFireTime = Time.time + fireCoolDown;
+                }
+                else
+                {
+                    Debug.Log("No target is found");
+                }
             }
             else if (myTowerType == towerType.AOE)
             {
                 theLoop.damageAllInArea(gameObject);
+                Debug.Log("The AOE tower is firing");
+                nextFireTime = Time.time + fireCoolDown;
             }
             else if (myTowerType == towerType.Cocount)
             {
                 //Fill this in later
+                nextFireTime = Time.time + fireCoolDown;
             }
-            nextFireTime = Time.time + fireCoolDown;
         }
-        else Debug.Log("Bass Canon cooling down: " + nextFireTime + " | " + Time.time);
+        //else Debug.Log("Bass Canon cooling down: " + nextFireTime + " | " + Time.time);
     }
 
     public void doDamage(Enemy someEnemy)
     {
         timeStamp = Time.time + fireCoolDown;
         //someEnemy.takeDamage(BaseDamage);
-        Debug.Log("Ima firin ma lazer");
+        //Debug.Log("Ima firin ma lazer");
     }
     class Projectile
     {
