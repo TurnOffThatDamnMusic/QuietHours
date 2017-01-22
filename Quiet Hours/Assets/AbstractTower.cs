@@ -85,9 +85,9 @@ public class AbstractTower : MonoBehaviour {
             Debug.Log("We are getting a legit jump target");
             //tempCoco.transform.position = Vector3.MoveTowards(tempCoco.transform.position, jumpTarget.transform.position, step);
 
-            Vector3 dir2 = jumpTarget.transform.position - aCoco.theCoco.transform.position;
-            float angle2 = Mathf.Atan2(dir2.y, dir2.x) * Mathf.Rad2Deg;
-            aCoco.theCoco.transform.rotation = Quaternion.Euler(0f, 0f, angle2 - 90);
+            //Vector3 dir2 = jumpTarget.transform.position - aCoco.theCoco.transform.position;
+            //float angle2 = Mathf.Atan2(dir2.y, dir2.x) * Mathf.Rad2Deg;
+            //aCoco.theCoco.transform.rotation = Quaternion.Euler(0f, 0f, angle2 - 90);
 
             aCoco.currentTarget = jumpTarget;
         }
@@ -176,9 +176,9 @@ public class AbstractTower : MonoBehaviour {
                     doDamage(tempEnemy);
 
                     //Look at the target
-                    Vector3 dir = theEnemy.transform.position - transform.position;
-                    float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                    transform.GetChild(0).transform.rotation = Quaternion.Euler(0f, 0f, angle - 90);
+                    //Vector3 dir = theEnemy.transform.position - transform.position;
+                    //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                    //transform.GetChild(0).transform.rotation = Quaternion.Euler(0f, 0f, angle - 90);
 
                     GameObject tempCoco = (GameObject)Instantiate(coconut, transform.position, Quaternion.identity);
 
@@ -221,9 +221,9 @@ public class AbstractTower : MonoBehaviour {
             float step = 3f * Time.deltaTime;
             tempCoco.transform.position = Vector3.MoveTowards(tempCoco.transform.position, jumpTarget.transform.position, step);
 
-            Vector3 dir2 = jumpTarget.transform.position - tempCoco.transform.position;
-            float angle2 = Mathf.Atan2(dir2.y, dir2.x) * Mathf.Rad2Deg;
-            tempCoco.transform.rotation = Quaternion.Euler(0f, 0f, angle2 - 90);
+            //Vector3 dir2 = jumpTarget.transform.position - tempCoco.transform.position;
+            //float angle2 = Mathf.Atan2(dir2.y, dir2.x) * Mathf.Rad2Deg;
+            //tempCoco.transform.rotation = Quaternion.Euler(0f, 0f, angle2 - 90);
 
             while (Vector3.Distance(tempCoco.transform.position, jumpTarget.transform.position) > .05)
             {
