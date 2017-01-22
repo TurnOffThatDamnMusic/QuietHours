@@ -184,7 +184,6 @@ public class MainLoop : MonoBehaviour {
 
     //TODO CHANGE DAMAGE TO RANGE
     public GameObject getBestTarget(GameObject theTower, float range)
-    public GameObject getBestTarget(GameObject theTower, int range)
     {
         List<EnemyClass> inRangeEnemies = new List<EnemyClass>();
         if (myEnemies.Count != 0)//Range checking will ensure a swift victory
@@ -195,12 +194,14 @@ public class MainLoop : MonoBehaviour {
             {
                 if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < range)
                 {
+                    Debug.Log("Enemy added");
                     inRangeEnemies.Add(anEnemy);
                 }
             }
             int bestStage = 0;
             float lowestDistance = 1000000f; //Oh no. Lookout its a Snip...! *thud*
 
+            //TODO; Optimize
             foreach (EnemyClass anEnemy in inRangeEnemies)
             {
                 if (anEnemy.enemyScript.stage > bestStage)
@@ -223,10 +224,12 @@ public class MainLoop : MonoBehaviour {
             }
             if (bestEnemy != null)
             {
+                Debug.Log("Best Enemy Found");
                 return bestEnemy.theEnemy;
             }
             else
             {
+                Debug.Log("No best enemy found");
                 return null;
             }
         } else {

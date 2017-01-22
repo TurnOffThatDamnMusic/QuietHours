@@ -15,7 +15,7 @@ public class AbstractTower : MonoBehaviour {
     public bool isSelected = false;
     public List<AudioClip> TowerBeats; //Holds all audioclips for tower/projectile sounds
     public float audioLevel; //Sound level
-    public int range;
+    public float range;
 
     public enum towerType { SingleTarget, AOE, Cocount };
 
@@ -65,46 +65,39 @@ public class AbstractTower : MonoBehaviour {
             audiosrc.PlayOneShot(TowerBeats[0], audioLevel);
         }
     }
-    //BongoCongo blat blat....MUMUMUMUMULTI-KILL_KILl_kill
-    public void bounceAttack()
-    {
-        int currentBounces = 0;
-        GameObject partypooper = theLoop.getBestTarget(gameObject, range);
-        Enemy target = partypooper.GetComponent<Enemy>();
-        if (currentBounces < bounceNumber && partypooper != null)
-        {
-            doDamage(target);
-            playAudio();
-            currentBounces++;
-
-            //nextCustomer();
-        }
-    }
 	// Use this for initialization
 	void Start () {
         theCocos = new List<Coco>();
-
-
-    /**
-    * Moves Projectile to the next enemy
-    **/
-    public void nextCustomer()
-    {
-        Vector3 nextTarget = mTarget.position - mTransform.position;
-        Quaternion rot = Quaternion.LookRotation(nextTarget);
-        mTransform.rotation = Quaternion.RotateTowards(mTransform.rotation, rot, rotSpeed * Time.deltaTime);
-        mTransform.position += mTransform.forward * Velocity * Time.deltaTime;
-    }
-    // Use this for initialization
-    void Start () {
         theLoop = GameObject.Find("MainGame").GetComponent<MainLoop>();
         if (theLoop != null) Debug.Log("MainGame object found");
 
         audiosrc = GetComponent<AudioSource>(); //assigns audio source to be played
         if(audiosrc != null) Debug.Log("Audiosource found");
     }
+    //BongoCongo blat blat....MUMUMUMUMULTI-KILL_KILl_kill
+    public void CoconutAttack(Coco aCoco)
+    {
+        aCoco.currentBounce++;
+        GameObject jumpTarget = theLoop.getRandomInRange(aCoco.theCoco, coconutRange);
+        doDamage(jumpTarget.GetComponent<Enemy>());
+        if (jumpTarget != null)
+        {
+            Debug.Log("We are getting a legit jump target");
+            //tempCoco.transform.position = Vector3.MoveTowards(tempCoco.transform.position, jumpTarget.transform.position, step);
 
+            Vector3 dir2 = jumpTarget.transform.position - aCoco.theCoco.transform.position;
+            float angle2 = Mathf.Atan2(dir2.y, dir2.x) * Mathf.Rad2Deg;
+            aCoco.theCoco.transform.rotation = Quaternion.Euler(0f, 0f, angle2 - 90);
 
+            aCoco.currentTarget = jumpTarget;
+        }
+        else
+        {
+            Destroy(aCoco.theCoco);
+            theCocos.Remove(aCoco);
+        }
+
+    }
 
 	// Update is called once per frame
 	void Update () {
@@ -120,31 +113,19 @@ public class AbstractTower : MonoBehaviour {
             }
             else
             {
-                float step = 10.0f * Time.deltaTime;
-                aCoco.theCoco.transform.position = Vector3.MoveTowards(aCoco.theCoco.transform.position, aCoco.currentTarget.transform.position, step);
-
-                if (Vector3.Distance(aCoco.theCoco.transform.position, aCoco.currentTarget.transform.position) < .1)
+                if (aCoco != null && aCoco.currentTarget != null)
                 {
-                    aCoco.currentBounce++;
-                    GameObject jumpTarget = theLoop.getRandomInRange(aCoco.theCoco, coconutRange);
+                    float step = 10.0f * Time.deltaTime;
+                    aCoco.theCoco.transform.position = Vector3.MoveTowards(aCoco.theCoco.transform.position, aCoco.currentTarget.transform.position, step);
 
-                    doDamage(jumpTarget.GetComponent<Enemy>());
-
-                     if (jumpTarget != null)
-                     {
-                         Debug.Log("We are getting a legit jump target");
-                         //tempCoco.transform.position = Vector3.MoveTowards(tempCoco.transform.position, jumpTarget.transform.position, step);
-
-                         Vector3 dir2 = jumpTarget.transform.position - aCoco.theCoco.transform.position;
-                         float angle2 = Mathf.Atan2(dir2.y, dir2.x) * Mathf.Rad2Deg;
-                         aCoco.theCoco.transform.rotation = Quaternion.Euler(0f, 0f, angle2 - 90);
-
-                         aCoco.currentTarget = jumpTarget;
-                     }
-                     else
-                     {
-                         Debug.Log("No target for the Coco :(");
-                     }
+                    if (Vector3.Distance(aCoco.theCoco.transform.position, aCoco.currentTarget.transform.position) < .1)
+                    {
+                        CoconutAttack(aCoco);
+                    }
+                } else
+                {
+                    Debug.Log("Something is null: " + aCoco + " | " + aCoco.currentTarget);
+                    CoconutAttack(aCoco);
                 }
             }
         }
@@ -154,9 +135,11 @@ public class AbstractTower : MonoBehaviour {
             if (myTowerType == towerType.SingleTarget)
             {
                 GameObject theEnemy = theLoop.getBestTarget(gameObject, range);
-                Enemy tempEnemy = theEnemy.GetComponent<Enemy>();
-                if (tempEnemy != null)
+                
+                if (theEnemy != null)
                 {
+                    Debug.Log("The Enemy is not NULL");
+                    Enemy tempEnemy = theEnemy.GetComponent<Enemy>();
                     doDamage(tempEnemy);
 
                     //Debug.Log("The enemy position is x : " + theEnemy.transform.position.x + " y :  " + theEnemy.transform.position.y + " z : " + theEnemy.transform.position.z);
@@ -186,9 +169,10 @@ public class AbstractTower : MonoBehaviour {
             else if (myTowerType == towerType.Cocount)
             {
                 GameObject theEnemy = theLoop.getBestTarget(gameObject, range);
-                Enemy tempEnemy = theEnemy.GetComponent<Enemy>();
-                if (tempEnemy != null)
+
+                if (theEnemy != null)
                 {
+                    Enemy tempEnemy = theEnemy.GetComponent<Enemy>();
                     doDamage(tempEnemy);
 
                     //Look at the target
