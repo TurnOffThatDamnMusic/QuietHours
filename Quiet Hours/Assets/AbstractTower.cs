@@ -33,12 +33,8 @@ public class AbstractTower : MonoBehaviour {
     //Plays the set audio clip one time
     void playAudio()
     {
-        if (IsFiring == true)
-        {
-            //Commented below line out
-            audiosrc.PlayOneShot(TowerBeat, audioLevel);
-            //yield WaitForSeconds(BeatRate);
-        }
+        audiosrc.PlayOneShot(TowerBeat, audioLevel);
+        //yield WaitForSeconds(BeatRate)
     }
 	// Use this for initialization
 	void Start () {
@@ -79,29 +75,52 @@ public class AbstractTower : MonoBehaviour {
     }
     class Projectile
     {
-        public List<Enemy> targetList = new List<Enemy>();
+        public List<Enemy> targetList; //= new List<Enemy>();
+
         public Enemy currentTarget; //Assigns the current target of the bounce
         public GameObject projectile;
+        public AbstractTower parentTower;
+
         public int bounceNumber; //Number of bounces before sound wave is absorbed/is dampened
+        public double cooldown;
+
         public float BlastRadius;
         public float range;
-        public double cooldown;
+        public float Velocity;
+        public float rotSpeed = 90.0F;
+        public Transform mTarget;
+        private Transform mTransform;
 
         public void addTarget(Enemy e)
         {
             targetList.Add(e);
         }
-
+        public void onCollisionEnter(Collision col)
+        {
+            parentTower.playAudio();
+        }
         //BongoCongo blat blat....MUMUMUMUMULTI-KILL_KILl_kill
         public void bounceAttack()
         {
             int currentBounces = 0;
             foreach(Enemy partypooper in targetList) {
-                if(currentBounces < bounceNumber)
+                if(currentBounces < bounceNumber && partypooper != null)
                 {
-                    
+                    parentTower.doDamage(partypooper);
+                    currentBounces++;
+                    nextCustomer();
                 }
             }
+        }
+        /**
+         * Moves Projectile to the next enemy
+         **/
+        public void nextCustomer() 
+        {
+            Vector3 nextTarget = mTarget.position - mTransform.position;
+            Quaternion rot = Quaternion.LookRotation(nextTarget);
+            mTransform.rotation = Quaternion.RotateTowards(mTransform.rotation, rot, rotSpeed * Time.deltaTime);
+            mTransform.position += mTransform.forward * Velocity * Time.deltaTime;
         }
 
 
