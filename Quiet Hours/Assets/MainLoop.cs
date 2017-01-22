@@ -139,7 +139,7 @@ public class MainLoop : MonoBehaviour {
     public void damageAllInArea(GameObject theTower){
         foreach (EnemyClass anEnemy in myEnemies)
         {
-            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().BaseDamage)
+            if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().range)
             {
                 anEnemy.enemyScript.takeDamage(theTower.GetComponent<AbstractTower>().BaseDamage);
             }
@@ -157,7 +157,7 @@ public class MainLoop : MonoBehaviour {
 
             foreach (EnemyClass anEnemy in myEnemies)
             {
-                if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().BaseDamage)
+                if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().range)
                 {
                     inRangeEnemies.Add(anEnemy);
                 }

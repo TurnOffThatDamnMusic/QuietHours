@@ -14,6 +14,12 @@ public class AbstractTower : MonoBehaviour {
     public bool isSelected = false;
     public AudioClip TowerBeat;
     public float audioLevel;
+    public float range;
+
+    public enum towerType { SingleTarget, AOE, Cocount };
+
+    public towerType myTowerType;
+
 
     public float timeStamp;
     public float fireCoolDown = 0.2F;
@@ -47,10 +53,20 @@ public class AbstractTower : MonoBehaviour {
         //Cooldown code
         if (Time.time > nextFireTime)
         {
+            if (myTowerType == towerType.SingleTarget)
+            {
+                Enemy tempEnemy = theLoop.getBestTarget(gameObject);
+                doDamage(tempEnemy);
+            }
+            else if (myTowerType == towerType.AOE)
+            {
+                theLoop.damageAllInArea(gameObject);
+            }
+            else if (myTowerType == towerType.Cocount)
+            {
+                //Fill this in later
+            }
             nextFireTime = Time.time + fireCoolDown;
-            theLoop.damageAllInArea(gameObject);
-            Enemy tempEnemy = theLoop.getBestTarget(gameObject);
-            doDamage(tempEnemy);
         }
         else Debug.Log("Bass Canon cooling down: " + nextFireTime + " | " + Time.time);
     }

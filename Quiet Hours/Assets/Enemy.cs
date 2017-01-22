@@ -48,13 +48,13 @@ public class Enemy : MonoBehaviour {
 
     private void killMe()
     {
-        theLoop.killEnemy(this.gameObject);
+        theLoop.killEnemy(gameObject);
         Debug.Log("Call to mainloop to kill an enemy");
     }
 
     public void killMyself()
     {
         Debug.Log("Call to destroy enemy game object");
-        Destroy(this);
+        Destroy(gameObject);
     }
 }
