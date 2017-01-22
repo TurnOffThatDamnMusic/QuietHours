@@ -36,6 +36,11 @@ public class Enemy : MonoBehaviour {
     void changeTarget()
     {
         theLoop.giveNextWaypoint(this);
+        if (stage == 7)
+        {
+            //Damage the house before you die
+            killMe();
+        }
     }
 
     public void takeDamage(int damageTaken)
