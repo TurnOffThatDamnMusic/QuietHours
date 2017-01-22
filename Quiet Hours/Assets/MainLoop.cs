@@ -83,6 +83,7 @@ public class MainLoop : MonoBehaviour {
             }
         }
 
+        /*
         foreach (Square aSquare in squares)
         {
             if (aSquare.inUse)
@@ -94,6 +95,7 @@ public class MainLoop : MonoBehaviour {
                 GameObject tempBox = (GameObject)Instantiate(greenBox, aSquare.position, Quaternion.identity);
             }
         }
+         * */
 
         timeGo = Time.time;
 
