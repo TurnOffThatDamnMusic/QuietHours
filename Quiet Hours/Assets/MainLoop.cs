@@ -123,7 +123,7 @@ public class MainLoop : MonoBehaviour {
 
     public Enemy getClosestTarget(GameObject theTower)
     {
-        EnemyClass closestEnemy = myEnemies[0];
+        EnemyClass closestEnemy = null;
         foreach (EnemyClass anEnemy in myEnemies)
         {
             if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < Vector3.Distance(theTower.transform.position, closestEnemy.theEnemy.transform.position))
@@ -148,12 +148,12 @@ public class MainLoop : MonoBehaviour {
 
 
     //TODO CHANGE DAMAGE TO RANGE
-    public Enemy getBestTarget(GameObject theTower)
+    public GameObject getBestTarget(GameObject theTower)
     {
         List<EnemyClass> inRangeEnemies = new List<EnemyClass>();
         if (myEnemies.Count != 0)//Range checking will ensure a swift victory
         {
-            EnemyClass bestEnemy = myEnemies[0];
+            EnemyClass bestEnemy = null;
 
             foreach (EnemyClass anEnemy in myEnemies)
             {
@@ -185,7 +185,14 @@ public class MainLoop : MonoBehaviour {
                     }
                 }
             }
-            return bestEnemy.enemyScript;
+            if (bestEnemy != null)
+            {
+                return bestEnemy.theEnemy;
+            }
+            else
+            {
+                return null;
+            }
         } else {
             Debug.Log("No enemies found");
             return null;
