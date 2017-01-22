@@ -148,7 +148,7 @@ public class MainLoop : MonoBehaviour {
 
 
     //TODO CHANGE DAMAGE TO RANGE
-    public GameObject getBestTarget(GameObject theTower)
+    public GameObject getBestTarget(GameObject theTower, int range)
     {
         List<EnemyClass> inRangeEnemies = new List<EnemyClass>();
         if (myEnemies.Count != 0)//Range checking will ensure a swift victory
@@ -157,7 +157,7 @@ public class MainLoop : MonoBehaviour {
 
             foreach (EnemyClass anEnemy in myEnemies)
             {
-                if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().range)
+                if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < range)
                 {
                     inRangeEnemies.Add(anEnemy);
                 }
