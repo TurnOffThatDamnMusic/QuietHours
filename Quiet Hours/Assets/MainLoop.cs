@@ -25,6 +25,8 @@ public class MainLoop : MonoBehaviour {
     //Useable Squares
     private List<Square> squares;
 
+    public GameObject[] randEnemies = new GameObject[5];
+
     float timeGo;
 
 	// Use this for initialization
@@ -125,7 +127,9 @@ public class MainLoop : MonoBehaviour {
 
     public void instantiateEnemy()
     {
-        GameObject tempEnemy = (GameObject)Instantiate(baseEnemy);
+        int rIndex = UnityEngine.Random.Range(0, randEnemies.Length);
+        GameObject whatEnemy = randEnemies[rIndex];
+        GameObject tempEnemy = (GameObject)Instantiate(whatEnemy);
         EnemyClass anotherTemp = new EnemyClass(tempEnemy);
         anotherTemp.enemyScript.theLoop = this;
         anotherTemp.enemyScript.target = Waypoint1;
