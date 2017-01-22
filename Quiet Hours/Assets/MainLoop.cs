@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class MainLoop : MonoBehaviour {
 
@@ -23,6 +24,8 @@ public class MainLoop : MonoBehaviour {
     private List<GameObject> boxes;
     //Useable Squares
     private List<Square> squares;
+
+    float timeGo;
 
 	// Use this for initialization
 	void Start () {
@@ -92,6 +95,8 @@ public class MainLoop : MonoBehaviour {
             }
         }
 
+        timeGo = Time.time;
+
 	}
 
     // Update is called once per frame
@@ -99,14 +104,19 @@ public class MainLoop : MonoBehaviour {
     int maxEnemies = 15;
     int currentEnemies = 1;
     void Update () {
+        float currentTime = Time.time;
 		if(currentEnemies < maxEnemies)
         {
-            currentEnemies++;
-            instantiateEnemy();
+            if (Time.time - timeGo > .2)
+            {
+                currentEnemies++;
+                instantiateEnemy();
+                timeGo = Time.time;
+            }
         }
 	}
 
-    public void instantiateTower(Object someObject)
+    public void instantiateTower(GameObject someObject)
     {
         
     }
@@ -146,9 +156,34 @@ public class MainLoop : MonoBehaviour {
         }
     }
 
+    public GameObject getRandomInRange(GameObject anObject, float range)
+    {
+        List<EnemyClass> inRangeEnemies = new List<EnemyClass>();
+
+        if (myEnemies.Count != 0)
+        {
+            foreach (EnemyClass anEnemy in myEnemies)
+            {
+                if (Vector3.Distance(anObject.transform.position, anEnemy.theEnemy.transform.position) < range)
+                {
+                    inRangeEnemies.Add(anEnemy);
+                }
+            }
+            int rand = (int)(UnityEngine.Random.value * inRangeEnemies.Count);
+
+            //Debug.Log("Random is : " + rand);
+            return inRangeEnemies[rand].theEnemy;
+
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 
     //TODO CHANGE DAMAGE TO RANGE
-    public GameObject getBestTarget(GameObject theTower)
+    public GameObject getBestTarget(GameObject theTower, float range)
     {
         List<EnemyClass> inRangeEnemies = new List<EnemyClass>();
         if (myEnemies.Count != 0)//Range checking will ensure a swift victory
@@ -157,7 +192,7 @@ public class MainLoop : MonoBehaviour {
 
             foreach (EnemyClass anEnemy in myEnemies)
             {
-                if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < theTower.GetComponent<AbstractTower>().range)
+                if (Vector3.Distance(theTower.transform.position, anEnemy.theEnemy.transform.position) < range)
                 {
                     inRangeEnemies.Add(anEnemy);
                 }
