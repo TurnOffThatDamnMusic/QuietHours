@@ -10,14 +10,23 @@ public class AbstractTower : MonoBehaviour {
     public double UpgradeCost;
     public int BaseDamage;
     public double BaseFirerate;
+    public int annoyanceLevel; //Spawn rate variable
     public int BeatRate; //Sponsored by DJ Lucio
     public GameObject CurrentTarget;
     public bool isSelected = false;
     public AudioClip[] TowerBeats = new AudioClip[1]; //Holds all audioclips for tower/projectile sounds
     public float audioLevel = 0.5F; //Sound level
     public float range;
+   
 
-    public enum towerType { SingleTarget, AOE, Cocount };
+    /**
+     * Tower Types
+     * - SingleTarget: Normal Tower, targets one enemy at a time with one shot
+     * - AOE: Targets groups of enemies and fires a projectile which deals radial damage
+     * - Coconut: Heat seeking, projectile targets and attacks one enemy, then moves on to another
+     * - Amplifier: Buffs the stats of nearby towers and increases the volume of attacks
+     **/
+    public enum towerType { SingleTarget, AOE, Cocount, Amplifier };
 
     public towerType myTowerType;
 
@@ -34,10 +43,12 @@ public class AbstractTower : MonoBehaviour {
     public float coconutRange;
 
     private List<Coco> theCocos;
+    private List<GameObject> nearbyTowers;
+    private bool isUpgraded = false;
     /**
       *  Projectile Variables
       *  
-     **/  
+     **/
     public Enemy currentTarget; //Assigns the current target of the bounce
     public GameObject projectile;
     public Transform mTarget;
@@ -67,14 +78,11 @@ public class AbstractTower : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         audiosrc = gameObject.GetComponent<AudioSource>();
-        if (audiosrc == null) Debug.Log("Audio Source is null");
-        else Debug.Log("Audio Source found!");
         theCocos = new List<Coco>();
         theLoop = GameObject.Find("MainGame").GetComponent<MainLoop>();
         if (theLoop != null) Debug.Log("MainGame object found");
 
         audiosrc = GetComponent<AudioSource>(); //assigns audio source to be played
-        if (audiosrc != null) Debug.Log("Audiosource found"); else Debug.Log("Audiosource NOT found!!!");
     }
     //BongoCongo blat blat....MUMUMUMUMULTI-KILL_KILl_kill
     public void CoconutAttack(Coco aCoco)
@@ -169,6 +177,32 @@ public class AbstractTower : MonoBehaviour {
                 playAudio();
                 Debug.Log("The AOE tower is firing");
                 nextFireTime = Time.time + fireCoolDown;
+            } else if (myTowerType == towerType.Amplifier)
+            {
+                Debug.Log("Amplifier Tower");
+                //Search for nearby towers
+                SphereCollider searchZone = gameObject.GetComponent<SphereCollider>();
+                searchZone.radius = range; //Set search radius
+                Collider[] amplifyZone = Physics.OverlapSphere(gameObject.transform.position, range);
+                Debug.Log("Objects found for boosting: " + amplifyZone.Length);
+                for(int i = 0; i < amplifyZone.Length; i++)
+                {
+                    if(amplifyZone[i].gameObject.tag == "Tower")
+                    {
+                        Debug.Log("Boosting Tower");
+                        AbstractTower t = amplifyZone[i].gameObject.GetComponent<AbstractTower>();
+                        if(t.isUpgraded == false)
+                        {
+                            Debug.Log("Upgraded tower: " + amplifyZone[i].gameObject);
+                            t.range += BaseDamage;
+                            t.BaseDamage += BaseDamage;
+                            if (t.cooldown >= 0.1 && (t.cooldown - t.cooldown * t.BaseFirerate) >= 0.1)
+                                t.cooldown -= t.cooldown * BaseFirerate;
+                            t.isUpgraded = true;
+                        }
+                    }
+                }
+
             }
 
             else if (myTowerType == towerType.Cocount)
